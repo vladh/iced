@@ -1,5 +1,6 @@
 #![allow(missing_docs)]
 use crate::core::time;
+use crate::renderer;
 
 use std::collections::VecDeque;
 
@@ -147,12 +148,15 @@ impl Debug {
             format!("{key} {value:?}")
         }
 
+
         lines.push(format!(
             "{} {} - {}",
             env!("CARGO_PKG_NAME"),
             env!("CARGO_PKG_VERSION"),
             env!("CARGO_PKG_REPOSITORY"),
         ));
+
+        lines.push(format!("Renderer: {}", renderer::NAME));
         lines.push(key_value("Startup:", self.startup_duration));
         lines.push(key_value("Update:", self.update_durations.average()));
         lines.push(key_value("View:", self.view_durations.average()));

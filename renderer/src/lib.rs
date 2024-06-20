@@ -21,6 +21,9 @@ pub type Renderer = renderer::Renderer;
 /// [`iced`]: https://github.com/iced-rs/iced
 pub type Compositor = renderer::Compositor;
 
+/// The name of the renderer in use.
+pub const NAME: &str = renderer::NAME;
+
 #[cfg(all(feature = "wgpu", feature = "tiny-skia"))]
 mod renderer {
     pub type Renderer = crate::fallback::Renderer<
@@ -32,18 +35,22 @@ mod renderer {
         iced_wgpu::window::Compositor,
         iced_tiny_skia::window::Compositor,
     >;
+
+    pub const NAME: &str = "wgpu with tiny_skia fallback";
 }
 
 #[cfg(all(feature = "wgpu", not(feature = "tiny-skia")))]
 mod renderer {
     pub type Renderer = iced_wgpu::Renderer;
     pub type Compositor = iced_wgpu::window::Compositor;
+    pub const NAME: &str = "wgpu";
 }
 
 #[cfg(all(not(feature = "wgpu"), feature = "tiny-skia"))]
 mod renderer {
     pub type Renderer = iced_tiny_skia::Renderer;
     pub type Compositor = iced_tiny_skia::window::Compositor;
+    pub const NAME: &str = "tiny_skia";
 }
 
 #[cfg(not(any(feature = "wgpu", feature = "tiny-skia")))]
@@ -57,4 +64,5 @@ mod renderer {
 
     pub type Renderer = ();
     pub type Compositor = ();
+    pub const NAME: &str = "null";
 }
