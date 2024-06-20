@@ -32,6 +32,7 @@ mod debug;
 mod debug;
 
 pub use iced_core as core;
+pub use iced_renderer as renderer;
 pub use iced_futures as futures;
 
 pub use debug::Debug;
