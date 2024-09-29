@@ -1,3 +1,7 @@
+#![allow(unused_imports)]
+#![allow(unused_variables)]
+#![allow(dead_code)]
+
 //! Connect a window with a renderer.
 use crate::core::{Color, Size};
 use crate::graphics::color;
@@ -213,58 +217,68 @@ pub async fn new<W: compositor::Window>(
 }
 
 /// Presents the given primitives with the given [`Compositor`].
-pub fn present<T: AsRef<str>>(
+pub fn present<T: AsRef<str>, F: Fn()>(
     compositor: &mut Compositor,
     renderer: &mut Renderer,
     surface: &mut wgpu::Surface<'static>,
     viewport: &Viewport,
     background_color: Color,
+    pre_present: Option<F>,
     overlay: &[T],
 ) -> Result<(), compositor::SurfaceError> {
-    match surface.get_current_texture() {
-        Ok(frame) => {
-            let mut encoder = compositor.device.create_command_encoder(
-                &wgpu::CommandEncoderDescriptor {
-                    label: Some("iced_wgpu encoder"),
-                },
-            );
+    println!("iced/wgpu/src/window/compositor.rs:present()");
+    surface.get_current_texture().unwrap().present();
+    Ok(())
+    // match surface.get_current_texture() {
+    //     Ok(frame) => {
+    //         // let mut encoder = compositor.device.create_command_encoder(
+    //         //     &wgpu::CommandEncoderDescriptor {
+    //         //         label: Some("iced_wgpu encoder"),
+    //         //     },
+    //         // );
 
-            let view = &frame
-                .texture
-                .create_view(&wgpu::TextureViewDescriptor::default());
+    //         // let view = &frame
+    //         //     .texture
+    //         //     .create_view(&wgpu::TextureViewDescriptor::default());
 
-            renderer.present(
-                &mut compositor.engine,
-                &compositor.device,
-                &compositor.queue,
-                &mut encoder,
-                Some(background_color),
-                frame.texture.format(),
-                view,
-                viewport,
-                overlay,
-            );
+    //         // renderer.present(
+    //         //     &mut compositor.engine,
+    //         //     &compositor.device,
+    //         //     &compositor.queue,
+    //         //     &mut encoder,
+    //         //     Some(background_color),
+    //         //     frame.texture.format(),
+    //         //     view,
+    //         //     viewport,
+    //         //     overlay,
+    //         // );
 
-            let _ = compositor.engine.submit(&compositor.queue, encoder);
+    //         // let _ = compositor.engine.submit(&compositor.queue, encoder);
 
-            // Present the frame
-            frame.present();
+    //         // if let Some(pre_present) = pre_present {
+    //         //     println!("CALLING PRE_PRESENT");
+    //         //     pre_present();
+    //         // }
 
-            Ok(())
-        }
-        Err(error) => match error {
-            wgpu::SurfaceError::Timeout => {
-                Err(compositor::SurfaceError::Timeout)
-            }
-            wgpu::SurfaceError::Outdated => {
-                Err(compositor::SurfaceError::Outdated)
-            }
-            wgpu::SurfaceError::Lost => Err(compositor::SurfaceError::Lost),
-            wgpu::SurfaceError::OutOfMemory => {
-                Err(compositor::SurfaceError::OutOfMemory)
-            }
-        },
-    }
+    //         // Present the frame
+    //         println!("PRESENT!!!!!!!!!!");
+    //         frame.present();
+
+    //         Ok(())
+    //     }
+    //     Err(error) => match error {
+    //         wgpu::SurfaceError::Timeout => {
+    //             Err(compositor::SurfaceError::Timeout)
+    //         }
+    //         wgpu::SurfaceError::Outdated => {
+    //             Err(compositor::SurfaceError::Outdated)
+    //         }
+    //         wgpu::SurfaceError::Lost => Err(compositor::SurfaceError::Lost),
+    //         wgpu::SurfaceError::OutOfMemory => {
+    //             Err(compositor::SurfaceError::OutOfMemory)
+    //         }
+    //     },
+    // }
 }
 
 impl graphics::Compositor for Compositor {
@@ -356,15 +370,16 @@ impl graphics::Compositor for Compositor {
         }
     }
 
-    fn present<T: AsRef<str>>(
+    fn present<T: AsRef<str>, F: Fn()>(
         &mut self,
         renderer: &mut Self::Renderer,
         surface: &mut Self::Surface,
         viewport: &Viewport,
         background_color: Color,
+        pre_present: Option<F>,
         overlay: &[T],
     ) -> Result<(), compositor::SurfaceError> {
-        present(self, renderer, surface, viewport, background_color, overlay)
+        present(self, renderer, surface, viewport, background_color, pre_present, overlay)
     }
 
     fn screenshot<T: AsRef<str>>(

@@ -121,15 +121,15 @@ impl Renderer {
         viewport: &Viewport,
         overlay: &[T],
     ) {
-        self.draw_overlay(overlay, viewport);
-        self.prepare(engine, device, queue, format, encoder, viewport);
-        self.render(engine, encoder, frame, clear_color, viewport);
+        // self.draw_overlay(overlay, viewport);
+        // self.prepare(engine, device, queue, format, encoder, viewport);
+        // self.render(engine, encoder, frame, clear_color, viewport);
 
-        self.triangle_storage.trim();
-        self.text_storage.trim();
+        // self.triangle_storage.trim();
+        // self.text_storage.trim();
 
-        #[cfg(any(feature = "svg", feature = "image"))]
-        self.image_cache.borrow_mut().trim();
+//         #[cfg(any(feature = "svg", feature = "image"))]
+//         self.image_cache.borrow_mut().trim();
     }
 
     fn prepare(

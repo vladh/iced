@@ -315,12 +315,13 @@ where
         delegate!(self, compositor, compositor.fetch_information())
     }
 
-    fn present<T: AsRef<str>>(
+    fn present<T: AsRef<str>, F: Fn()>(
         &mut self,
         renderer: &mut Self::Renderer,
         surface: &mut Self::Surface,
         viewport: &graphics::Viewport,
         background_color: Color,
+        pre_present: Option<F>,
         overlay: &[T],
     ) -> Result<(), compositor::SurfaceError> {
         match (self, renderer, surface) {
@@ -333,6 +334,7 @@ where
                 surface,
                 viewport,
                 background_color,
+                pre_present,
                 overlay,
             ),
             (
@@ -344,6 +346,7 @@ where
                 surface,
                 viewport,
                 background_color,
+                pre_present,
                 overlay,
             ),
             _ => unreachable!(),

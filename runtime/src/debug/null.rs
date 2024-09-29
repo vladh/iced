@@ -1,10 +1,14 @@
 #![allow(missing_docs)]
 #[derive(Debug, Default)]
-pub struct Debug;
+pub struct Debug {
+    pub counter: i64,
+}
 
 impl Debug {
     pub fn new() -> Self {
-        Self
+        Self {
+            counter: 0,
+        }
     }
 
     pub fn startup_started(&mut self) {}

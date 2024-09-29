@@ -8,6 +8,7 @@ use std::collections::VecDeque;
 #[derive(Debug)]
 pub struct Debug {
     is_enabled: bool,
+    pub counter: i64,
 
     startup_start: time::Instant,
     startup_duration: time::Duration,
@@ -41,6 +42,7 @@ impl Debug {
 
         Self {
             is_enabled: false,
+            counter: 0,
             startup_start: now,
             startup_duration: time::Duration::from_secs(0),
 
